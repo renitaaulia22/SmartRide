@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hasil Rekomendasi SAW — SmartRide</title>
+    <link rel="icon" type="image/png" href="assets/smartride-logo.png" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Navbar Ringkas -->
+    <header class="navbar">
+      <div class="nav-container">
+        <a
+          href="index.html"
+          class="btn btn-outline"
+          style="
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            padding: 0;
+          "
+        >
+          <img
+            src="assets/smartride-logo.png"
+            alt="SmartRide Logo"
+            style="width: 44px; height: 44px; object-fit: contain"
+          />
+          <span
+            style="font-weight: 800; font-size: 1.5rem; color: var(--dark-text)"
+            >Smart<span style="color: var(--primary-green)">Ride</span></span
+          >
+        </a>
+        <div style="display: flex; gap: 10px">
+          <a
+            href="index.html"
+            class="btn btn-outline"
+            style="padding: 8px 18px; font-size: 0.88rem"
+            >Beranda</a
+          >
+          <a
+            href="kuesioner.html"
+            class="btn btn-primary"
+            style="padding: 8px 18px; font-size: 0.88rem"
+            >Ubah Preferensi</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main style="max-width: 1100px; margin: 0 auto; padding: 40px 20px">
+      <div style="text-align: center; margin-bottom: 30px">
+        <span class="badge-tag"
+          >Rekomendasi Berbasis Simple Additive Weighting (SAW)</span
+        >
+        <h1 style="font-size: 2.3rem; margin: 12px 0; color: var(--dark-text)">
+          Transportasi Paling Tepat Untuk Anda
+        </h1>
+        <p style="color: var(--muted-text)">
+          Rekomendasi dihitung secara objektif dari perpaduan respon dataset dan
+          preferensi kuesioner Anda.
+        </p>
+      </div>
+
+      <!-- Winner Card Dinamis -->
+      <div
+        class="glass-panel winner-hero-box"
+        style="padding: 38px; margin-bottom: 36px"
+      >
+        <div
+          style="
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: linear-gradient(90deg, var(--primary-yellow), #f59e0b);
+            color: var(--dark-text);
+            font-weight: 900;
+            font-size: 0.85rem;
+            padding: 8px 24px;
+            border-bottom-left-radius: 16px;
+            box-shadow: 0 4px 12px rgba(244, 197, 66, 0.3);
+          "
+        >
+          🏆 PILIHAN UTAMA #1
+        </div>
+        <div
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+          "
+        >
+          <div>
+            <span class="badge-tag" style="margin-bottom: 12px"
+              >Pilihan Paling Kompatibel</span
+            >
+            <h2
+              id="winner-name"
+              style="
+                font-size: 3.2rem;
+                font-weight: 900;
+                margin: 4px 0 12px;
+                color: var(--dark-green);
+                letter-spacing: -1px;
+              "
+            >
+              -
+            </h2>
+            <div
+              id="winner-reasons"
+              style="
+                color: var(--dark-text);
+                font-weight: 600;
+                line-height: 1.9;
+                font-size: 1rem;
+              "
+            >
+              <!-- Alasan dinamis dimasukkan lewat JS -->
+            </div>
+          </div>
+          <div
+            style="
+              text-align: right;
+              background: var(--white);
+              padding: 24px 32px;
+              border-radius: var(--radius-xl);
+              border: 2px solid var(--primary-green);
+              box-shadow: 0 10px 25px var(--glow-green);
+            "
+          >
+            <div
+              id="winner-score"
+              style="
+                font-size: 2.8rem;
+                font-weight: 900;
+                color: var(--primary-green);
+                line-height: 1;
+              "
+            >
+              0.0000
+            </div>
+            <div
+              id="winner-match"
+              class="badge-tag"
+              style="
+                background: var(--primary-yellow);
+                color: var(--dark-text);
+                font-size: 1.05rem;
+                margin-top: 10px;
+              "
+            >
+              0.00% Match
+            </div>
+            <small
+              style="
+                display: block;
+                color: var(--muted-text);
+                margin-top: 8px;
+                font-weight: 700;
+                font-size: 0.8rem;
+              "
+              >Skor Akhir SAW (Vi)</small
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Peringkat Semua Alternatif -->
+      <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 16px">
+        Peringkat Alternatif Transportasi
+      </h3>
+      <div id="rankings-grid"></div>
+
+      <!-- Distribusi Bobot Kriteria Pengguna -->
+      <div class="glass-panel" style="padding: 24px; margin: 36px 0">
+        <h4
+          style="margin: 0 0 14px; font-size: 1.1rem; color: var(--dark-green)"
+        >
+          Distribusi Bobot Preferensi Kuesioner Anda (W)
+        </h4>
+        <div
+          id="bobot-grid"
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+            gap: 10px;
+          "
+        ></div>
+      </div>
+
+      <!-- Faktor Penentu Rekomendasi -->
+      <div class="glass-panel" style="padding: 28px; margin-bottom: 36px">
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-top: 0; color: var(--dark-green);">
+          💡 Faktor Penentu Rekomendasi
+        </h3>
+        <p style="color: var(--muted-text); margin-top: 4px; line-height: 1.7;">
+          Bagian ini menunjukkan kriteria yang paling besar menyumbang skor SAW masing-masing aplikasi.
+          Semakin besar persentasenya, semakin besar pengaruh kriteria tersebut terhadap skor akhir.
+        </p>
+        <div id="contribution-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-top:18px;"></div>
+
+        <h4 style="margin:28px 0 10px; color:var(--dark-green);">Rincian Kontribusi Semua Kriteria</h4>
+        <div class="table-responsive">
+          <table class="table-calc">
+            <thead>
+              <tr>
+                <th>Alternatif</th>
+                <th>C1</th><th>C2</th><th>C3</th><th>C4</th><th>C5</th>
+                <th>C6</th><th>C7</th><th>C8</th><th>C9</th><th>C10</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="contribution-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Audit Perhitungan Matematis SAW -->
+      <div class="glass-panel" style="padding: 28px; margin-bottom: 40px">
+        <h3
+          style="
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-top: 0;
+            color: var(--dark-green);
+          "
+        >
+          Transparansi Audit Matematis SAW
+        </h3>
+
+        <h5 style="margin: 18px 0 8px; color: var(--muted-text)">
+          1. Matriks Keputusan Awal (Performa Rata-Rata Responden / X)
+        </h5>
+        <div class="table-responsive">
+          <table class="table-calc">
+            <thead>
+              <tr>
+                <th>Alternatif</th>
+                <th>C1</th>
+                <th>C2</th>
+                <th>C3</th>
+                <th>C4</th>
+                <th>C5</th>
+                <th>C6</th>
+                <th>C7</th>
+                <th>C8</th>
+                <th>C9</th>
+                <th>C10</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-perf-body"></tbody>
+          </table>
+        </div>
+
+        <h5 style="margin: 24px 0 8px; color: var(--muted-text)">
+          2. Matriks Ternormalisasi (R)
+        </h5>
+        <div class="table-responsive">
+          <table class="table-calc">
+            <thead>
+              <tr>
+                <th>Alternatif</th>
+                <th>C1</th>
+                <th>C2</th>
+                <th>C3</th>
+                <th>C4</th>
+                <th>C5</th>
+                <th>C6</th>
+                <th>C7</th>
+                <th>C8</th>
+                <th>C9</th>
+                <th>C10</th>
+              </tr>
+            </thead>
+            <tbody id="saw-matrix-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin: 30px 0">
+        <a
+          href="kuesioner.html"
+          class="btn btn-primary"
+          style="padding: 12px 30px; font-size: 1rem"
+          >Uji Ulang dengan Preferensi Lain</a
+        >
+      </div>
+    </main>
+
+    <script src="js/saw.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        initResultPage();
+      });
+    </script>
+  </body>
+</html>

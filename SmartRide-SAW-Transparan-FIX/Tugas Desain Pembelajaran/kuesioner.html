@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <script>
+      const user = JSON.parse(localStorage.getItem("smartride_user") || "null");
+      if (!user || !user.name) {
+        alert("Akses Dibatasi! Harap login atau daftar akun terlebih dahulu.");
+        window.location.href = "login.html";
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kuesioner Preferensi — SmartRide</title>
+    <link rel="icon" type="image/png" href="assets/smartride-logo.png" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="nav-container">
+        <a
+          href="index.html"
+          class="logo"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+          "
+        >
+          <img
+            src="assets/smartride-logo.png"
+            alt="SmartRide Logo"
+            style="width: 44px; height: 44px; object-fit: contain"
+          />
+          <span
+            style="font-weight: 800; font-size: 1.5rem; color: var(--dark-text)"
+            >Smart<span style="color: var(--primary-green)">Ride</span></span
+          >
+        </a>
+        <div style="display: flex; gap: 10px; align-items: center">
+          <a
+            href="index.html"
+            class="btn btn-outline"
+            style="padding: 8px 16px; font-size: 0.88rem"
+            >Beranda</a
+          >
+          <button
+            type="button"
+            onclick="logoutUser()"
+            class="btn"
+            style="
+              background: #fee2e2;
+              color: #dc2626;
+              border: 1px solid #fca5a5;
+              padding: 8px 14px;
+              font-size: 0.88rem;
+              cursor: pointer;
+            "
+          >
+            Ganti Akun
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main style="max-width: 800px; margin: 0 auto; padding: 40px 20px">
+      <div class="survey-wrapper">
+        <!-- Progress Header & Bar Hijau-Kuning -->
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            color: var(--dark-green);
+            font-size: 0.95rem;
+          "
+        >
+          <span
+            >Pertanyaan <span id="current-q-index">1</span> dari
+            <span id="total-q">20</span></span
+          >
+          <span id="progress-percent" style="color: var(--accent-gold)"
+            >5% Selesai</span
+          >
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-bar" style="width: 5%"></div>
+        </div>
+
+        <!-- Question Card -->
+        <div
+          class="glass-panel"
+          id="card-container"
+          style="
+            padding: 36px;
+            background: var(--white);
+            border: 2px solid var(--glass-border);
+          "
+        >
+          <div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 18px;
+              "
+            >
+              <div
+                id="q-icon"
+                style="
+                  font-size: 2.2rem;
+                  background: var(--light-green);
+                  width: 60px;
+                  height: 60px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  border-radius: 14px;
+                  border: 1px solid var(--primary-green);
+                "
+              >
+                💸
+              </div>
+              <div>
+                <span
+                  id="q-category"
+                  class="badge-tag"
+                  style="margin-bottom: 6px"
+                  >C1 • Tarif & Anggaran</span
+                >
+                <h2
+                  id="q-title"
+                  style="
+                    margin: 4px 0 0;
+                    font-size: 1.5rem;
+                    color: var(--dark-text);
+                  "
+                >
+                  Keterjangkauan Tarif Per-KM
+                </h2>
+              </div>
+            </div>
+
+            <p
+              id="q-desc"
+              style="
+                color: var(--muted-text);
+                font-size: 1.05rem;
+                line-height: 1.6;
+                min-height: 50px;
+                margin-bottom: 24px;
+              "
+            >
+              Seberapa penting tarif dasar per kilometer yang murah dan hemat
+              untuk perjalanan Anda?
+            </p>
+
+            <!-- 5 Skala Likert -->
+            <div
+              id="options-group"
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+                gap: 10px;
+                margin-bottom: 30px;
+              "
+            >
+              <button
+                type="button"
+                class="rating-btn"
+                onclick="selectRating(1)"
+                style="
+                  padding: 14px 8px;
+                  border-radius: 10px;
+                  border: 1.5px solid #e2e8f0;
+                  background: #f8fafc;
+                  cursor: pointer;
+                  text-align: center;
+                  transition: 0.2s;
+                "
+              >
+                <strong
+                  style="
+                    display: block;
+                    font-size: 1.3rem;
+                    color: var(--dark-text);
+                  "
+                  >1</strong
+                >
+                <small style="font-size: 0.75rem; color: var(--muted-text)"
+                  >Sangat Tidak Penting</small
+                >
+              </button>
+              <button
+                type="button"
+                class="rating-btn"
+                onclick="selectRating(2)"
+                style="
+                  padding: 14px 8px;
+                  border-radius: 10px;
+                  border: 1.5px solid #e2e8f0;
+                  background: #f8fafc;
+                  cursor: pointer;
+                  text-align: center;
+                  transition: 0.2s;
+                "
+              >
+                <strong
+                  style="
+                    display: block;
+                    font-size: 1.3rem;
+                    color: var(--dark-text);
+                  "
+                  >2</strong
+                >
+                <small style="font-size: 0.75rem; color: var(--muted-text)"
+                  >Tidak Penting</small
+                >
+              </button>
+              <button
+                type="button"
+                class="rating-btn active"
+                onclick="selectRating(3)"
+                style="
+                  padding: 14px 8px;
+                  border-radius: 10px;
+                  border: 1.5px solid #e2e8f0;
+                  background: #f8fafc;
+                  cursor: pointer;
+                  text-align: center;
+                  transition: 0.2s;
+                "
+              >
+                <strong
+                  style="
+                    display: block;
+                    font-size: 1.3rem;
+                    color: var(--dark-text);
+                  "
+                  >3</strong
+                >
+                <small style="font-size: 0.75rem; color: var(--muted-text)"
+                  >Cukup Penting</small
+                >
+              </button>
+              <button
+                type="button"
+                class="rating-btn"
+                onclick="selectRating(4)"
+                style="
+                  padding: 14px 8px;
+                  border-radius: 10px;
+                  border: 1.5px solid #e2e8f0;
+                  background: #f8fafc;
+                  cursor: pointer;
+                  text-align: center;
+                  transition: 0.2s;
+                "
+              >
+                <strong
+                  style="
+                    display: block;
+                    font-size: 1.3rem;
+                    color: var(--dark-text);
+                  "
+                  >4</strong
+                >
+                <small style="font-size: 0.75rem; color: var(--muted-text)"
+                  >Penting</small
+                >
+              </button>
+              <button
+                type="button"
+                class="rating-btn"
+                onclick="selectRating(5)"
+                style="
+                  padding: 14px 8px;
+                  border-radius: 10px;
+                  border: 1.5px solid #e2e8f0;
+                  background: #f8fafc;
+                  cursor: pointer;
+                  text-align: center;
+                  transition: 0.2s;
+                "
+              >
+                <strong
+                  style="
+                    display: block;
+                    font-size: 1.3rem;
+                    color: var(--dark-text);
+                  "
+                  >5</strong
+                >
+                <small style="font-size: 0.75rem; color: var(--muted-text)"
+                  >Sangat Penting</small
+                >
+              </button>
+            </div>
+          </div>
+
+          <!-- Tombol Navigasi -->
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border-top: 1px solid #eef2f6;
+              padding-top: 20px;
+            "
+          >
+            <button
+              id="btn-prev"
+              class="btn btn-outline"
+              onclick="prevQuestion()"
+              disabled
+              style="padding: 10px 20px"
+            >
+              ← Sebelumnya
+            </button>
+            <button
+              id="btn-next"
+              class="btn btn-primary"
+              onclick="nextQuestion()"
+              style="padding: 10px 24px"
+            >
+              Lanjut →
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function logoutUser() {
+        if (confirm("Apakah kamu ingin keluar atau ganti akun?")) {
+          localStorage.removeItem("smartride_user");
+          localStorage.removeItem("smartride_user_preferences");
+          window.location.href = "login.html";
+        }
+      }
+    </script>
+    <script src="js/script.js"></script>
+  </body>
+</html>

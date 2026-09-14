@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Masuk & Daftar Akun — SmartRide</title>
+    <link rel="icon" type="image/png" href="assets/smartride-logo.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .auth-wrapper {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+      .auth-card {
+        width: 100%;
+        max-width: 960px;
+        display: grid;
+        grid-template-columns: 1fr 1.15fr;
+        overflow: hidden;
+        border-radius: var(--radius-lg);
+        background: var(--white);
+        box-shadow: var(--shadow-subtle);
+        border: 1px solid var(--glass-border);
+      }
+      /* Sisi Kiri: Hijau + Aksen Kuning */
+      .auth-showcase {
+        background: linear-gradient(
+          145deg,
+          var(--dark-green) 0%,
+          var(--primary-green) 65%,
+          #084c37 100%
+        );
+        color: var(--white);
+        padding: 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+      }
+      .auth-showcase::after {
+        content: "";
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(
+          circle,
+          rgba(244, 197, 66, 0.3) 0%,
+          transparent 70%
+        );
+        border-radius: 50%;
+      }
+      .auth-form-side {
+        padding: 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--white);
+      }
+      .auth-tabs {
+        display: flex;
+        gap: 8px;
+        background: #f1f5f9;
+        padding: 6px;
+        border-radius: 999px;
+        margin-bottom: 24px;
+      }
+      .auth-tab-btn {
+        flex: 1;
+        padding: 10px 0;
+        border-radius: 999px;
+        border: none;
+        font-weight: 700;
+        color: var(--muted-text);
+        background: transparent;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .auth-tab-btn.active {
+        background: var(--white);
+        color: var(--dark-green);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-label {
+        display: block;
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--dark-text);
+        margin-bottom: 6px;
+      }
+      .form-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        border-radius: 8px;
+        border: 1.5px solid #cbd5e1;
+        outline: none;
+        font-size: 0.95rem;
+      }
+      .form-input:focus {
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(0, 155, 114, 0.15);
+      }
+      .alert-box {
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        margin-bottom: 16px;
+        display: none;
+      }
+      @media (max-width: 860px) {
+        .auth-card {
+          grid-template-columns: 1fr;
+        }
+        .auth-showcase {
+          display: none;
+        }
+        .auth-form-side {
+          padding: 32px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="nav-container">
+        <a
+          href="index.html"
+          class="logo"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+          "
+        >
+          <img
+            src="assets/smartride-logo.png"
+            alt="SmartRide Logo"
+            style="width: 44px; height: 44px; object-fit: contain"
+          />
+          <span
+            style="font-weight: 800; font-size: 1.5rem; color: var(--dark-text)"
+            >Smart<span style="color: var(--primary-green)">Ride</span></span
+          >
+        </a>
+        <a
+          href="index.html"
+          class="btn btn-outline"
+          style="padding: 8px 16px; font-size: 0.88rem"
+          >Kembali ke Beranda</a
+        >
+      </div>
+    </header>
+
+    <main class="auth-wrapper">
+      <div class="auth-card">
+        <!-- Sisi Kiri Branding -->
+        <div class="auth-showcase">
+          <div>
+            <img
+              src="assets/smartride-logo.png"
+              alt="SmartRide Logo"
+              style="
+                width: 64px;
+                height: 64px;
+                object-fit: contain;
+                margin-bottom: 16px;
+              "
+            />
+            <div class="badge-tag" style="margin-bottom: 12px">
+              Akses Pengguna SmartRide
+            </div>
+            <h2
+              style="
+                font-size: 1.9rem;
+                margin: 0 0 12px;
+                color: var(--white);
+                line-height: 1.3;
+              "
+            >
+              Temukan Transportasi Ideal Tanpa Ragu.
+            </h2>
+            <p
+              style="
+                color: var(--light-green);
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Simpan preferensi kuesioner Anda, bandingkan skor matematis SAW,
+              dan peroleh rekomendasi armada terbaik.
+            </p>
+          </div>
+          <div
+            style="
+              background: rgba(255, 255, 255, 0.1);
+              padding: 16px;
+              border-radius: 8px;
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              font-size: 0.88rem;
+            "
+          >
+            “SmartRide memberikan transparansi penuh antara Gojek, Grab, dan
+            Maxim tanpa bias sponsor.”
+          </div>
+        </div>
+
+        <!-- Sisi Kanan Form -->
+        <div class="auth-form-side">
+          <div class="auth-tabs">
+            <button
+              type="button"
+              class="auth-tab-btn active"
+              id="tab-login-btn"
+              onclick="switchAuthMode('login')"
+            >
+              Masuk
+            </button>
+            <button
+              type="button"
+              class="auth-tab-btn"
+              id="tab-register-btn"
+              onclick="switchAuthMode('register')"
+            >
+              Daftar Akun
+            </button>
+          </div>
+
+          <div id="auth-alert" class="alert-box"></div>
+
+          <!-- Form Login -->
+          <form id="form-login" onsubmit="handleAuthSubmit(event, 'login')">
+            <div class="form-group">
+              <label class="form-label">Email Pengguna</label>
+              <input
+                type="email"
+                id="login-email"
+                class="form-input"
+                placeholder="nama@email.com"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kata Sandi</label>
+              <input
+                type="password"
+                id="login-password"
+                class="form-input"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="
+                width: 100%;
+                padding: 12px;
+                margin-top: 10px;
+                justify-content: center;
+              "
+            >
+              Masuk ke SmartRide
+            </button>
+          </form>
+
+          <!-- Form Register -->
+          <form
+            id="form-register"
+            style="display: none"
+            onsubmit="handleAuthSubmit(event, 'register')"
+          >
+            <div class="form-group">
+              <label class="form-label">Nama Lengkap</label>
+              <input
+                type="text"
+                id="reg-name"
+                class="form-input"
+                placeholder="Masukkan nama Anda"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Alamat Email</label>
+              <input
+                type="email"
+                id="reg-email"
+                class="form-input"
+                placeholder="nama@email.com"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kata Sandi Baru</label>
+              <input
+                type="password"
+                id="reg-password"
+                class="form-input"
+                placeholder="Minimal 6 karakter"
+                minlength="6"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn"
+              style="
+                width: 100%;
+                padding: 12px;
+                margin-top: 10px;
+                justify-content: center;
+                background: var(--primary-yellow);
+                color: var(--dark-text);
+                font-weight: 800;
+              "
+            >
+              Buat Akun Sekarang
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function switchAuthMode(mode) {
+        const loginForm = document.getElementById("form-login");
+        const registerForm = document.getElementById("form-register");
+        const loginBtn = document.getElementById("tab-login-btn");
+        const registerBtn = document.getElementById("tab-register-btn");
+        const alertBox = document.getElementById("auth-alert");
+        alertBox.style.display = "none";
+
+        if (mode === "login") {
+          loginForm.style.display = "block";
+          registerForm.style.display = "none";
+          loginBtn.classList.add("active");
+          registerBtn.classList.remove("active");
+        } else {
+          loginForm.style.display = "none";
+          registerForm.style.display = "block";
+          registerBtn.classList.add("active");
+          loginBtn.classList.remove("active");
+        }
+      }
+
+      function handleAuthSubmit(event, mode) {
+        event.preventDefault();
+        const alertBox = document.getElementById("auth-alert");
+
+        if (mode === "register") {
+          const name = document.getElementById("reg-name").value.trim();
+          const email = document.getElementById("reg-email").value.trim();
+          localStorage.setItem(
+            "smartride_user",
+            JSON.stringify({ name, email }),
+          );
+          alertBox.style.background = "#DCFCE7";
+          alertBox.style.color = "#166534";
+          alertBox.textContent = `Registrasi berhasil! Selamat datang, ${name}. Mengarahkan...`;
+          alertBox.style.display = "block";
+          setTimeout(() => {
+            window.location.href = "kuesioner.html";
+          }, 1000);
+        } else {
+          const email = document.getElementById("login-email").value.trim();
+          const stored = JSON.parse(
+            localStorage.getItem("smartride_user") || "{}",
+          );
+          const displayName = stored.name || email.split("@")[0];
+          localStorage.setItem(
+            "smartride_user",
+            JSON.stringify({ name: displayName, email }),
+          );
+          alertBox.style.background = "#DCFCE7";
+          alertBox.style.color = "#166534";
+          alertBox.textContent = "Login berhasil! Mengalihkan...";
+          alertBox.style.display = "block";
+          setTimeout(() => {
+            window.location.href = "kuesioner.html";
+          }, 800);
+        }
+      }
+    </script>
+  </body>
+</html>

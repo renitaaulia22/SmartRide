@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartRide — Sistem Rekomendasi Transportasi Online SAW</title>
+    <link rel="icon" type="image/png" href="assets/smartride-logo.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      .section-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 70px 20px;
+      }
+      .section-head {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+      .section-head h2 {
+        font-size: 2.2rem;
+        color: var(--dark-text);
+        margin: 10px 0;
+      }
+      .section-head p {
+        color: var(--muted-text);
+        max-width: 620px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+      .card-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+      }
+      .step-number {
+        width: 44px;
+        height: 44px;
+        background: var(--light-yellow);
+        color: var(--dark-green);
+        border: 2px solid var(--primary-yellow);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="nav-container">
+        <a
+          href="index.html"
+          class="logo"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+          "
+        >
+          <img
+            src="assets/smartride-logo.png"
+            alt="SmartRide Logo"
+            style="width: 44px; height: 44px; object-fit: contain"
+          />
+          <span
+            style="
+              font-weight: 800;
+              font-size: 1.5rem;
+              color: var(--dark-text);
+              letter-spacing: -0.5px;
+            "
+          >
+            Smart<span style="color: var(--primary-green)">Ride</span>
+          </span>
+        </a>
+        <ul
+          class="nav-links"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+          "
+        >
+          <li>
+            <a
+              href="#tentang"
+              style="
+                text-decoration: none;
+                color: var(--dark-text);
+                font-weight: 600;
+              "
+              >Tentang</a
+            >
+          </li>
+          <li>
+            <a
+              href="#cara-kerja"
+              style="
+                text-decoration: none;
+                color: var(--dark-text);
+                font-weight: 600;
+              "
+              >Cara Kerja</a
+            >
+          </li>
+          <li>
+            <a
+              href="#keunggulan"
+              style="
+                text-decoration: none;
+                color: var(--dark-text);
+                font-weight: 600;
+              "
+              >Keunggulan</a
+            >
+          </li>
+          <li>
+            <a
+              href="login.html"
+              id="nav-login-link"
+              style="
+                text-decoration: none;
+                color: var(--dark-green);
+                font-weight: 700;
+              "
+              >Masuk</a
+            >
+          </li>
+          <li>
+            <a
+              href="kuesioner.html"
+              class="btn btn-primary"
+              style="padding: 10px 22px"
+            >
+              Mulai Analisis
+            </a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" style="padding: 60px 20px">
+      <div class="container" style="max-width: 1200px; margin: 0 auto">
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 40px;
+            align-items: center;
+          "
+        >
+          <div class="hero-content">
+            <div class="badge-tag" style="margin-bottom: 20px">
+              <span
+                style="
+                  width: 8px;
+                  height: 8px;
+                  background: var(--primary-green);
+                  border-radius: 50%;
+                "
+              ></span>
+              Algoritma SAW Berbasis Multi-Kriteria
+            </div>
+            <h1
+              style="
+                font-size: 2.8rem;
+                line-height: 1.2;
+                margin: 0 0 20px;
+                color: var(--dark-text);
+              "
+            >
+              Tentukan Transportasi Online
+              <span class="highlight">Terbaik & Paling Hemat</span> Sesuai
+              Kebutuhanmu
+            </h1>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 1.05rem;
+                line-height: 1.7;
+                margin-bottom: 28px;
+              "
+            >
+              SmartRide memadukan data evaluasi riil responden pengguna
+              transportasi online dengan preferensi perjalanan unik Anda
+              menggunakan metode ilmiah
+              <strong>Simple Additive Weighting (SAW)</strong>.
+            </p>
+            <div
+              style="
+                display: flex;
+                gap: 16px;
+                align-items: center;
+                margin-bottom: 36px;
+              "
+            >
+              <a
+                href="kuesioner.html"
+                class="btn btn-primary"
+                style="padding: 12px 28px; font-size: 1rem"
+              >
+                Mulai Analisis Sekarang →
+              </a>
+              <a
+                href="#cara-kerja"
+                class="btn btn-outline"
+                style="padding: 12px 24px; font-size: 1rem"
+              >
+                Pelajari Metode
+              </a>
+            </div>
+
+            <!-- Mini Stats -->
+            <div
+              class="glass-panel"
+              style="
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                padding: 18px 24px;
+                gap: 16px;
+                border-left: 5px solid var(--primary-yellow);
+              "
+            >
+              <div>
+                <h3
+                  style="margin: 0; font-size: 1.8rem; color: var(--dark-green)"
+                >
+                  3
+                </h3>
+                <p
+                  style="
+                    margin: 4px 0 0;
+                    font-size: 0.85rem;
+                    color: var(--muted-text);
+                  "
+                >
+                  Alternatif Layanan
+                </p>
+              </div>
+              <div>
+                <h3
+                  style="margin: 0; font-size: 1.8rem; color: var(--dark-green)"
+                >
+                  10
+                </h3>
+                <p
+                  style="
+                    margin: 4px 0 0;
+                    font-size: 0.85rem;
+                    color: var(--muted-text);
+                  "
+                >
+                  Kriteria SAW
+                </p>
+              </div>
+              <div>
+                <h3
+                  style="
+                    margin: 0;
+                    font-size: 1.8rem;
+                    color: var(--primary-green);
+                  "
+                >
+                  MCDM
+                </h3>
+                <p
+                  style="
+                    margin: 4px 0 0;
+                    font-size: 0.85rem;
+                    color: var(--muted-text);
+                  "
+                >
+                  Data-Driven
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Graphic Card -->
+          <div
+            class="glass-panel"
+            style="
+              padding: 30px;
+              text-align: center;
+              border: 2px solid var(--primary-green);
+              background: var(--white);
+            "
+          >
+            <img
+              src="assets/smartride-logo.png"
+              alt="SmartRide Graphic"
+              style="
+                width: 180px;
+                height: 180px;
+                object-fit: contain;
+                margin-bottom: 16px;
+              "
+            />
+            <h3 style="color: var(--dark-green); margin: 0 0 8px">
+              Keputusan Objektif & Transparan
+            </h3>
+            <p style="color: var(--muted-text); font-size: 0.9rem; margin: 0">
+              Membandingkan Gojek, Grab, dan Maxim tanpa memihak sponsor.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Tentang SmartRide -->
+    <section
+      id="tentang"
+      style="
+        background: rgba(255, 255, 255, 0.6);
+        border-top: 1px solid var(--glass-border);
+      "
+    >
+      <div class="section-wrap">
+        <div class="section-head">
+          <span class="badge-tag">Tentang SmartRide</span>
+          <h2>Membantu Komuter Memilih Secara Cerdas</h2>
+          <p>
+            SmartRide adalah Sistem Pendukung Keputusan (SPK) berbasis web yang
+            dirancang untuk mengakhiri kebingungan saat memilih layanan
+            transportasi daring harian.
+          </p>
+        </div>
+
+        <div class="card-grid-3">
+          <div
+            class="glass-panel"
+            style="padding: 28px; background: var(--white)"
+          >
+            <div style="font-size: 2rem; margin-bottom: 12px">🎯</div>
+            <h3 style="color: var(--dark-green); margin: 0 0 10px">
+              Objektif & Tanpa Bias
+            </h3>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Sistem tidak memihak aplikasi mana pun. Pemenang ditentukan murni
+              dari kombinasi data lapangan dan preferensi pribadi Anda.
+            </p>
+          </div>
+
+          <div
+            class="glass-panel"
+            style="padding: 28px; background: var(--white)"
+          >
+            <div style="font-size: 2rem; margin-bottom: 12px">📊</div>
+            <h3 style="color: var(--dark-green); margin: 0 0 10px">
+              Berbasis Data Responden
+            </h3>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Performa Gojek, Grab, dan Maxim dinilai langsung dari rekam jejak
+              puluhan indikator pengalaman pengguna sesungguhnya.
+            </p>
+          </div>
+
+          <div
+            class="glass-panel"
+            style="padding: 28px; background: var(--white)"
+          >
+            <div style="font-size: 2rem; margin-bottom: 12px">⚖️</div>
+            <h3 style="color: var(--dark-green); margin: 0 0 10px">
+              Metode SAW Matematis
+            </h3>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Mengadopsi formula <em>Simple Additive Weighting</em> untuk
+              menghasilkan pembobotan dan normalisasi matriks yang transparan.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Cara Kerja -->
+    <section id="cara-kerja">
+      <div class="section-wrap">
+        <div class="section-head">
+          <span class="badge-tag">Alur Sistem</span>
+          <h2>Bagaimana SmartRide Menentukan Pilihan?</h2>
+          <p>
+            Hanya dengan 3 tahapan mudah, rekomendasi paling akurat langsung
+            tersaji di layar Anda.
+          </p>
+        </div>
+
+        <div class="card-grid-3">
+          <div
+            class="glass-panel"
+            style="padding: 30px; background: var(--white); position: relative"
+          >
+            <div class="step-number">1</div>
+            <h3 style="color: var(--dark-green); margin: 0 0 10px">
+              Isi Kuesioner Singkat
+            </h3>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Jawab 20 pertanyaan preferensi seputar tarif, kecepatan, promo,
+              kenyamanan, hingga ketersediaan armada sesuai kebutuhan Anda.
+            </p>
+          </div>
+
+          <div
+            class="glass-panel"
+            style="padding: 30px; background: var(--white); position: relative"
+          >
+            <div class="step-number">2</div>
+            <h3 style="color: var(--dark-green); margin: 0 0 10px">
+              Perhitungan SAW Engine
+            </h3>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Algoritma menormalisasi matriks keputusan dan mengalikan bobot
+              kepentingan kriteria dengan nilai performa masing-masing
+              alternatif.
+            </p>
+          </div>
+
+          <div
+            class="glass-panel"
+            style="padding: 30px; background: var(--white); position: relative"
+          >
+            <div class="step-number">3</div>
+            <h3 style="color: var(--dark-green); margin: 0 0 10px">
+              Peroleh Rekomendasi
+            </h3>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Dapatkan peringkat transportasi terbaik lengkap dengan persentase
+              kecocokan (*match*), alasan spesifik, dan tabel transparansi
+              audit.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Keunggulan -->
+    <section
+      id="keunggulan"
+      style="
+        background: rgba(255, 255, 255, 0.6);
+        border-top: 1px solid var(--glass-border);
+      "
+    >
+      <div class="section-wrap">
+        <div class="section-head">
+          <span class="badge-tag">Keunggulan Fitur</span>
+          <h2>Mengapa Memakai SmartRide?</h2>
+          <p>
+            Kombinasi teknologi perhitungan presisi dan antarmuka interaktif
+            yang nyaman digunakan.
+          </p>
+        </div>
+
+        <div class="card-grid-3">
+          <div
+            class="glass-panel"
+            style="
+              padding: 26px;
+              border-left: 5px solid var(--primary-green);
+              background: var(--white);
+            "
+          >
+            <h3 style="color: var(--dark-green); margin: 0 0 8px">
+              10 Kriteria Komprehensif
+            </h3>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 0.92rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Mencakup tarif per-KM, kestabilan harga, efisiensi waktu,
+              antarmuka aplikasi, fitur darurat, promo, hingga armada jam sibuk.
+            </p>
+          </div>
+
+          <div
+            class="glass-panel"
+            style="
+              padding: 26px;
+              border-left: 5px solid var(--primary-yellow);
+              background: var(--white);
+            "
+          >
+            <h3 style="color: var(--dark-green); margin: 0 0 8px">
+              Interaktif & Bersuara
+            </h3>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 0.92rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Dilengkapi efek audio melodis sintetis (*Web Audio API*) saat
+              memilih kriteria dan melodi kemenangan saat hasil keluar.
+            </p>
+          </div>
+
+          <div
+            class="glass-panel"
+            style="
+              padding: 26px;
+              border-left: 5px solid var(--primary-green);
+              background: var(--white);
+            "
+          >
+            <h3 style="color: var(--dark-green); margin: 0 0 8px">
+              Transparansi Matematis
+            </h3>
+            <p
+              style="
+                color: var(--muted-text);
+                font-size: 0.92rem;
+                line-height: 1.6;
+                margin: 0;
+              "
+            >
+              Semua nilai matriks $X$, normalisasi $R$, bobot $W$, dan nilai
+              akhir $V$ dapat diaudit langsung melalui tabel visual di halaman
+              hasil.
+            </p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 48px">
+          <a
+            href="kuesioner.html"
+            class="btn btn-primary"
+            style="padding: 14px 34px; font-size: 1.05rem"
+          >
+            Coba Rekomendasi Sekarang →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer
+      style="
+        background: var(--dark-text);
+        color: var(--white);
+        padding: 40px 20px;
+      "
+    >
+      <div
+        style="
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 20px;
+        "
+      >
+        <div style="display: flex; align-items: center; gap: 10px">
+          <img
+            src="assets/smartride-logo.png"
+            alt="Logo"
+            style="width: 36px; height: 36px; object-fit: contain"
+          />
+          <div>
+            <h4 style="margin: 0; color: var(--white)">SmartRide SPK</h4>
+            <small style="color: #94a3b8"
+              >Sistem Pendukung Keputusan Transportasi Online SAW</small
+            >
+          </div>
+        </div>
+        <div style="color: #94a3b8; font-size: 0.88rem">
+          &copy; 2026 SmartRide DSS Engine. Hak Cipta Dilindungi.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      function handleLogout() {
+        if (confirm("Apakah kamu yakin ingin keluar atau ganti akun?")) {
+          localStorage.removeItem("smartride_user");
+          localStorage.removeItem("smartride_user_preferences");
+          window.location.href = "login.html";
+        }
+      }
+
+      function handleStartAnalysis(event) {
+        const user = JSON.parse(
+          localStorage.getItem("smartride_user") || "null",
+        );
+        if (!user || !user.name) {
+          event.preventDefault();
+          alert("Silakan Masuk atau Daftar Akun terlebih dahulu!");
+          window.location.href = "login.html";
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll('a[href*="kuesioner"]').forEach((btn) => {
+          btn.addEventListener("click", handleStartAnalysis);
+        });
+
+        const user = JSON.parse(
+          localStorage.getItem("smartride_user") || "null",
+        );
+        const loginLink = document.getElementById("nav-login-link");
+        if (user && user.name && loginLink) {
+          loginLink.parentElement.innerHTML = `
+            <div style="display: inline-flex; align-items: center; gap: 10px; background: var(--light-green); padding: 6px 14px; border-radius: 999px; border: 1px solid var(--primary-green);">
+              <span style="font-weight: 700; color: var(--dark-green); font-size: 0.88rem;">👤 ${user.name}</span>
+              <button onclick="handleLogout()" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Keluar</button>
+            </div>
+          `;
+        }
+      });
+    </script>
+  </body>
+</html>
