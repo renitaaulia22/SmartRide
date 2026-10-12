@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartRide — SPK Evaluasi & Rekomendasi Transportasi Online</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom Modern UI Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col relative antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- Confetti Canvas Particle Layer -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- ==========================================
+         TOP NAVBAR (RESPONSIVE DOCK)
+         ========================================== -->
+    <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-slate-200/80 shadow-2xs">
+        <div class="max-w-5xl mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-600/20 ring-1 ring-emerald-500/30 shrink-0">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5 sm:gap-2">
+                        <h1 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">SmartRide</h1>
+                        <span class="px-1.5 py-0.2 sm:px-2 sm:py-0.5 text-[9px] sm:text-[10px] font-bold bg-emerald-100 text-emerald-800 rounded-full tracking-wide">SPK ENGINE</span>
+                    </div>
+                    <p class="text-[10px] sm:text-[11px] text-slate-400 font-medium hidden md:block">Sistem Pendukung Keputusan Pemilihan Transportasi Online</p>
+                </div>
+            </div>
+
+            <!-- View Switcher Tabs (Mobile Optimized) -->
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <div class="bg-slate-100/90 p-1 rounded-full flex items-center border border-slate-200/90 text-xs shadow-inner">
+                    <button 
+                        id="nav-btn-form" 
+                        type="button" 
+                        onclick="switchView('kuesioner')"
+                        class="px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm flex items-center gap-1 sm:gap-1.5 transition"
+                    >
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span class="hidden xs:inline sm:inline">Kuesioner</span>
+                        <span class="xs:hidden sm:hidden">Form</span>
+                    </button>
+                    <button 
+                        id="nav-btn-admin" 
+                        type="button" 
+                        onclick="switchView('admin')"
+                        class="px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition flex items-center gap-1 sm:gap-1.5"
+                    >
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <span>Admin</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         MAIN WRAPPER
+         ========================================== -->
+    <main class="flex-1 py-4 sm:py-8 px-3 sm:px-6">
+
+        <!-- ==========================================
+             VIEW 1: FORMULIR KUESIONER & REKOMENDASI
+             ========================================== -->
+        <div id="view-questionnaire" class="max-w-3xl mx-auto space-y-4 sm:space-y-6">
+
+            <!-- Hero Section -->
+            <div class="text-center max-w-xl mx-auto pt-1 sm:pt-2 pb-2 sm:pb-4">
+                <div class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[11px] sm:text-xs font-bold mb-2 sm:mb-3 shadow-2xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    Sistem Pendukung Keputusan Cerdas • 2026
+                </div>
+                <h2 class="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                    Temukan Transportasi Online yang Paling Cocok untuk Anda
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1.5 sm:mt-2 leading-relaxed px-1">
+                    Evaluasi 15 kriteria penting dan sistem akan merekomendasikan apakah <strong>Gojek</strong>, <strong>Grab</strong>, atau <strong>Maxim</strong> yang paling tepat untuk Anda.
+                </p>
+            </div>
+
+            <!-- Modern Stepper Wizard -->
+            <div class="smart-card p-3.5 sm:p-5 mb-4 sm:mb-6">
+                <div class="grid grid-cols-3 gap-2 relative">
+                    <div class="step-item is-active" id="stepper-item-1">
+                        <div class="step-bubble">1</div>
+                        <div class="text-left">
+                            <span class="block text-xs font-bold text-slate-800 leading-tight">Data Diri</span>
+                            <span class="hidden sm:block text-[10px] text-slate-400">Profil Responden</span>
+                        </div>
+                    </div>
+                    <div class="step-item" id="stepper-item-2">
+                        <div class="step-bubble">2</div>
+                        <div class="text-left">
+                            <span class="block text-xs font-bold text-slate-800 leading-tight">Kriteria</span>
+                            <span class="hidden sm:block text-[10px] text-slate-400">15 Kriteria SPK</span>
+                        </div>
+                    </div>
+                    <div class="step-item" id="stepper-item-3">
+                        <div class="step-bubble">3</div>
+                        <div class="text-left">
+                            <span class="block text-xs font-bold text-slate-800 leading-tight">Hasil</span>
+                            <span class="hidden sm:block text-[10px] text-slate-400">Rekomendasi SPK</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Progress Line -->
+                <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2.5 sm:mt-3 overflow-hidden">
+                    <div id="stepper-progress-fill" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-1.5 rounded-full transition-all duration-300" style="width: 33%;"></div>
+                </div>
+            </div>
+
+            <!-- Form Flow Wrapper -->
+            <form id="smartride-form" onsubmit="return false;">
+
+                <!-- ==========================================
+                     STEP 1: DATA DIRI RESPONDEN
+                     ========================================== -->
+                <div id="step-1-content" class="space-y-3.5 sm:space-y-4 animate-fade-up">
+
+                    <!-- Input Nama -->
+                    <div class="smart-card p-4 sm:p-6" id="card-nama">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-bold text-slate-900" for="input-nama">
+                                Nama Lengkap <span class="text-rose-500">*</span>
+                            </label>
+                            <span class="text-[11px] font-medium text-slate-400">Identitas responden</span>
+                        </div>
+                        <div class="relative">
+                            <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            <input 
+                                type="text" 
+                                id="input-nama" 
+                                class="smart-input" 
+                                placeholder="Masukkan nama lengkap Anda..."
+                                required
+                            >
+                        </div>
+                        <div class="error-msg hidden text-xs text-rose-600 font-bold mt-2 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                            <span>Nama lengkap wajib diisi.</span>
+                        </div>
+                    </div>
+
+                    <!-- Input Umur -->
+                    <div class="smart-card p-4 sm:p-6" id="card-umur">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-bold text-slate-900" for="input-umur">
+                                Umur Anda Saat Ini <span class="text-rose-500">*</span>
+                            </label>
+                            <span class="text-[11px] font-medium text-slate-400">Tahun</span>
+                        </div>
+                        <div class="relative max-w-xs">
+                            <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <input 
+                                type="number" 
+                                id="input-umur" 
+                                class="smart-input" 
+                                placeholder="Contoh: 21" 
+                                min="10" 
+                                max="95"
+                                required
+                            >
+                        </div>
+                        <div class="error-msg hidden text-xs text-rose-600 font-bold mt-2 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                            <span>Umur wajib diisi (rentang 10 - 95 tahun).</span>
+                        </div>
+                    </div>
+
+                    <!-- Input Jenjang / Status (Choice Cards) -->
+                    <div class="smart-card p-4 sm:p-6" id="card-status">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-900">
+                                    Jenjang / Status Aktivitas <span class="text-rose-500">*</span>
+                                </label>
+                                <p class="text-xs text-slate-500 mt-0.5">Mempengaruhi pembobotan profil SPK Anda</p>
+                            </div>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Pilih 1</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+                            <div class="choice-card choice-card-status" data-value="Sekolah">
+                                <span class="text-2xl">🎓</span>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-900">Pelajar Sekolah</div>
+                                    <span class="text-[11px] text-slate-500">SMP / SMA / SMK Sederajat</span>
+                                </div>
+                                <div class="check-indicator">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                </div>
+                            </div>
+
+                            <div class="choice-card choice-card-status" data-value="Kuliah">
+                                <span class="text-2xl">🏛️</span>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-900">Mahasiswa Kuliah</div>
+                                    <span class="text-[11px] text-slate-500">Diploma / S1 / Pascasarjana</span>
+                                </div>
+                                <div class="check-indicator">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                </div>
+                            </div>
+
+                            <div class="choice-card choice-card-status" data-value="Kerja">
+                                <span class="text-2xl">💼</span>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-900">Bekerja / Karyawan</div>
+                                    <span class="text-[11px] text-slate-500">Pekerja Kantor, Usaha, Profesional</span>
+                                </div>
+                                <div class="check-indicator">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                </div>
+                            </div>
+
+                            <div class="choice-card choice-card-status" data-value="Lainnya">
+                                <span class="text-2xl">🌐</span>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-900">Lainnya / Umum</div>
+                                    <span class="text-[11px] text-slate-500">Masyarakat Umum & Lain-lain</span>
+                                </div>
+                                <div class="check-indicator">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="error-msg hidden text-xs text-rose-600 font-bold mt-3 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                            <span>Silakan pilih salah satu jenjang/status Anda.</span>
+                        </div>
+                    </div>
+
+                    <!-- Input Layanan yang Saat Ini Paling Sering Digunakan (Gojek, Grab, Maxim) -->
+                    <div class="smart-card p-4 sm:p-6">
+                        <label class="block text-sm font-bold text-slate-900 mb-1">
+                            Aplikasi Transportasi yang Saat Ini Paling Sering Anda Gunakan
+                        </label>
+                        <p class="text-xs text-slate-500 mb-3">Pilih salah satu dari 3 platform transportasi online utama</p>
+
+                        <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                            <!-- Gojek Card -->
+                            <div class="brand-choice-card is-selected" data-value="Gojek">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 font-extrabold flex items-center justify-center mx-auto mb-1 sm:mb-2 text-lg sm:text-xl border border-emerald-200">
+                                    🟢
+                                </div>
+                                <div class="font-extrabold text-xs sm:text-base text-slate-900">Gojek</div>
+                                <span class="text-[9px] sm:text-[11px] text-emerald-700 font-semibold block mt-0.5 truncate">GoPay & Cepat</span>
+                            </div>
+
+                            <!-- Grab Card -->
+                            <div class="brand-choice-card" data-value="Grab">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-teal-50 text-teal-600 font-extrabold flex items-center justify-center mx-auto mb-1 sm:mb-2 text-lg sm:text-xl border border-teal-200">
+                                    🟢
+                                </div>
+                                <div class="font-extrabold text-xs sm:text-base text-slate-900">Grab</div>
+                                <span class="text-[9px] sm:text-[11px] text-teal-700 font-semibold block mt-0.5 truncate">Armada Nyaman</span>
+                            </div>
+
+                            <!-- Maxim Card -->
+                            <div class="brand-choice-card" data-value="Maxim">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 font-extrabold flex items-center justify-center mx-auto mb-1 sm:mb-2 text-lg sm:text-xl border border-amber-200">
+                                    🟡
+                                </div>
+                                <div class="font-extrabold text-xs sm:text-base text-slate-900">Maxim</div>
+                                <span class="text-[9px] sm:text-[11px] text-amber-700 font-semibold block mt-0.5 truncate">Tarif Hemat</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Next Button -->
+                    <div class="pt-2">
+                        <button 
+                            type="button" 
+                            id="btn-next-step"
+                            class="w-full py-3 sm:py-3.5 px-6 rounded-xl sm:rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm transition shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2"
+                        >
+                            <span>Lanjut ke Penilaian 15 Kriteria</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+
+                </div><!-- /step-1-content -->
+
+
+                <!-- ==========================================
+                     STEP 2: EVALUASI KRITERIA LIKERT 1 - 5
+                     ========================================== -->
+                <div id="step-2-content" class="space-y-3 sm:space-y-4 hidden animate-fade-up">
+
+                    <!-- Guidance Card -->
+                    <div class="smart-card p-3.5 sm:p-5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border-emerald-200">
+                        <div class="flex items-center gap-2.5 sm:gap-3">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base sm:text-lg shrink-0 shadow-sm">
+                                ⚖️
+                            </div>
+                            <div>
+                                <h3 class="text-xs sm:text-sm font-bold text-slate-900">Petunjuk Pembobotan Kriteria</h3>
+                                <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5">
+                                    Beri nilai 1 (Sangat Buruk) hingga 5 (Sangat Baik) pada 15 kriteria di bawah ini untuk menentukan rekomendasi yang paling cocok untuk Anda.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Likert Cards Container -->
+                    <div id="likert-questions-container" class="space-y-3 sm:space-y-4">
+                        <!-- Populated by app.js -->
+                    </div>
+
+                    <!-- Sticky Bottom Action Dock (Mobile Optimized) -->
+                    <div class="sticky-dock p-3 sm:p-4 mt-4 sm:mt-6">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3">
+                            <!-- Progress Stats -->
+                            <div class="w-full sm:w-auto">
+                                <div class="flex items-center justify-between sm:justify-start gap-2 text-xs text-slate-700 font-semibold mb-1" id="dock-answered-text">
+                                    0 dari 15 dinilai (0%)
+                                </div>
+                                <div class="w-full sm:w-48 bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                    <div id="dock-progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-1.5 rounded-full transition-all duration-300" style="width: 0%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                                <button 
+                                    type="button" 
+                                    id="btn-back-step"
+                                    class="w-1/3 sm:w-auto px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                    Kembali
+                                </button>
+                                <button 
+                                    type="button" 
+                                    id="btn-submit-form"
+                                    class="w-2/3 sm:w-auto px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2"
+                                >
+                                    <span>Kirim & Analisis SPK</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /step-2-content -->
+
+
+                <!-- ==========================================
+                     STEP 3: HASIL REKOMENDASI SPK TERBAIK
+                     ========================================== -->
+                <div id="step-3-content" class="hidden animate-fade-up space-y-4 sm:space-y-6">
+
+                    <!-- WINNER HERO CARD (REKOMENDASI UTAMA) -->
+                    <div class="recommendation-hero-card p-4 sm:p-8">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+                            <div class="flex items-center gap-3">
+                                <div id="recom-winner-logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white shadow-md flex items-center justify-center shrink-0 border border-slate-100">
+                                    <!-- Dynamic Logo -->
+                                </div>
+                                <div>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-extrabold bg-emerald-600 text-white shadow-sm mb-1">
+                                        <span>🏆</span> REKOMENDASI TERBAIK
+                                    </span>
+                                    <h2 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight" id="recom-winner-name">
+                                        Gojek
+                                    </h2>
+                                </div>
+                            </div>
+
+                            <!-- Match Score Pill -->
+                            <div class="w-full sm:w-auto text-left sm:text-right bg-white/90 backdrop-blur-md px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl border border-emerald-200/80 shadow-xs flex sm:block items-center justify-between">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Kecocokan SPK:</span>
+                                <span class="text-xl sm:text-2xl font-black text-emerald-800" id="recom-winner-match">
+                                    92% Cocok
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Tagline & Description -->
+                        <div class="pt-2.5 sm:pt-3 border-t border-emerald-200/60">
+                            <h4 class="text-xs sm:text-sm font-bold text-emerald-800" id="recom-winner-tagline">
+                                Super-App Cepat & Ekosistem Terlengkap
+                            </h4>
+                            <p class="text-[11px] sm:text-sm text-slate-600 mt-1 leading-relaxed" id="recom-winner-desc">
+                                Berdasarkan evaluasi kriteria Anda, layanan ini memiliki keselarasan tertinggi dengan prioritas dan mobilitas harian Anda.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- KOMPARASI 3 ALTERNATIF (Gojek, Grab, Maxim) -->
+                    <div class="smart-card p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5 sm:gap-2">
+                                <span>📊</span> Peringkat Kesesuaian 3 Alternatif SPK
+                            </h3>
+                            <span class="text-[10px] sm:text-xs text-slate-400 font-medium">15 Kriteria</span>
+                        </div>
+                        <div class="space-y-2 sm:space-y-2.5" id="recom-comparison-list">
+                            <!-- Populated by app.js -->
+                        </div>
+                    </div>
+
+                    <!-- TIKET DIGITAL RESPONDEN -->
+                    <div class="smart-card p-4 sm:p-6 bg-slate-50/80 border-slate-200">
+                        <div class="flex items-center justify-between pb-2.5 border-b border-slate-200">
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tiket Konfirmasi</span>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="font-mono font-extrabold text-emerald-700 text-xs sm:text-sm" id="confirm-id">-</span>
+                                    <span id="confirm-cloud-badge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                                        <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                        Tersinkron Cloud
+                                    </span>
+                                </div>
+                            </div>
+                            <button 
+                                type="button" 
+                                onclick="copyConfirmationId()" 
+                                class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1 shadow-2xs"
+                            >
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                Salin ID
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 pt-2.5 text-xs">
+                            <div>
+                                <span class="text-slate-400 font-medium block text-[11px]">Nama Responden:</span>
+                                <span class="font-bold text-slate-800" id="confirm-name">-</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 font-medium block text-[11px]">Profil Aktivitas:</span>
+                                <span class="font-semibold text-slate-700" id="confirm-profile">-</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 font-medium block text-[11px]">Skor Rata-rata Likert:</span>
+                                <span class="font-extrabold text-emerald-800" id="confirm-score">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
+                        <button 
+                            type="button" 
+                            id="btn-new-response"
+                            class="w-full sm:w-auto px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition shadow-2xs"
+                        >
+                            Isi Tanggapan Baru
+                        </button>
+                        <button 
+                            type="button" 
+                            onclick="switchView('admin')"
+                            class="w-full sm:w-auto px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2"
+                        >
+                            <span>Buka Dashboard Analitik Admin</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+
+                </div><!-- /step-3-content -->
+
+            </form>
+
+        </div><!-- /view-questionnaire -->
+
+
+        <!-- ==========================================
+             VIEW 2: SAAS ADMIN DASHBOARD
+             ========================================== -->
+        <div id="view-admin" class="max-w-5xl mx-auto hidden animate-fade-up space-y-4 sm:space-y-6">
+
+            <!-- Admin Top Banner -->
+            <div class="smart-card p-4 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <h2 class="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight">Admin Decision Hub</h2>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-100 text-emerald-800">SPK Analytics</span>
+                        <span id="cloud-sync-status" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-sky-100 text-sky-800 border border-sky-200">
+                            <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-ping"></span>
+                            Google Sheets Live
+                        </span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">
+                        Monitoring data responden kuesioner dan kalkulasi rekomendasi Gojek, Grab, & Maxim.
+                    </p>
+                </div>
+
+                <!-- Admin Action Buttons -->
+                <div class="flex flex-wrap items-center gap-2 pt-1 sm:pt-0">
+                    <button 
+                        type="button" 
+                        onclick="syncGoogleSheetsData(true)" 
+                        id="btn-sync-sheets"
+                        class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-sky-300 bg-sky-50 hover:bg-sky-100 text-sky-800 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                        title="Tarik data terbaru dari Google Sheets"
+                    >
+                        <svg id="sync-spinner" class="w-3.5 h-3.5 text-sky-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span id="sync-btn-text">Sinkronkan Cloud</span>
+                    </button>
+                    <button 
+                        type="button" 
+                        onclick="addSampleRespondent()" 
+                        class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                    >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                        + Sampel
+                    </button>
+                    <button 
+                        type="button" 
+                        onclick="exportRespondentsToCSV()" 
+                        class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20"
+                    >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Ekspor CSV
+                    </button>
+                    <button 
+                        type="button" 
+                        onclick="handleAdminLogout()" 
+                        class="px-3 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 text-slate-600 text-xs font-bold transition"
+                    >
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Summary Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-6 gap-2.5 sm:gap-4">
+                <!-- Total Responden -->
+                <div class="col-span-1 lg:col-span-2 smart-card p-3.5 sm:p-5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Total Responden</span>
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs sm:text-sm">
+                            👥
+                        </div>
+                    </div>
+                    <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 sm:gap-2">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900" id="metric-total-respondents">0</span>
+                        <span class="text-[10px] sm:text-xs text-emerald-700 font-semibold">tanggapan</span>
+                    </div>
+                </div>
+
+                <!-- Rata-rata Skor -->
+                <div class="col-span-1 lg:col-span-2 smart-card p-3.5 sm:p-5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Skor Total</span>
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs sm:text-sm">
+                            ★
+                        </div>
+                    </div>
+                    <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 sm:gap-2">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900" id="metric-overall-score">0.00</span>
+                        <span class="text-[10px] sm:text-xs text-slate-400 font-semibold">/ 5.0</span>
+                    </div>
+                </div>
+
+                <!-- Breakdown Status -->
+                <div class="smart-card p-3 sm:p-4">
+                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Sekolah</span>
+                    <div class="mt-1 sm:mt-2" id="metric-sekolah-count">0</div>
+                </div>
+                <div class="smart-card p-3 sm:p-4">
+                    <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Kuliah</span>
+                    <div class="mt-1 sm:mt-2" id="metric-kuliah-count">0</div>
+                </div>
+                <div class="smart-card p-3 sm:p-4">
+                    <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Bekerja</span>
+                    <div class="mt-1 sm:mt-2" id="metric-kerja-count">0</div>
+                </div>
+                <div class="smart-card p-3 sm:p-4">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Lainnya</span>
+                    <div class="mt-1 sm:mt-2" id="metric-lainnya-count">0</div>
+                </div>
+            </div>
+
+            <!-- DISTRIBUSI REKOMENDASI TERPILIH SPK -->
+            <div class="smart-card p-4 sm:p-5 bg-gradient-to-r from-emerald-500/5 via-teal-500/5 to-amber-500/5">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider block">Hasil Rekomendasi SPK Terbanyak:</span>
+                        <p class="text-xs text-slate-500">Distribusi platform terbaik yang dihasilkan engine untuk para responden</p>
+                    </div>
+                    <div id="metric-recommendation-breakdown" class="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-1 sm:pt-0">
+                        <!-- Populated by app.js -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALISIS BOBOT 15 KRITERIA SPK -->
+            <div class="smart-card p-4 sm:p-6">
+                <div class="flex items-center justify-between mb-3 sm:mb-4">
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold text-slate-900">Distribusi Skor 15 Kriteria SPK</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Nilai rata-rata kepuasan per kriteria (K1 - K15) di antara responden</p>
+                    </div>
+                    <button type="button" onclick="resetToDefaultData()" class="text-xs text-emerald-700 font-bold hover:underline shrink-0">
+                        Reset Default
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3" id="criteria-analytics-list">
+                    <!-- Populated by app.js -->
+                </div>
+            </div>
+
+            <!-- TABEL & MOBILE CARDS DATA RESPONDEN -->
+            <div class="smart-card overflow-hidden">
+                <!-- Toolbar -->
+                <div class="p-3.5 sm:p-5 border-b border-slate-200/80 bg-slate-50/70 flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-3">
+                    <div>
+                        <h3 class="text-sm sm:text-base font-extrabold text-slate-900">Database Responden Kuesioner</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-500" id="table-filtered-count">Menampilkan data responden</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Search Box -->
+                        <div class="relative flex-1 sm:flex-none min-w-[150px] sm:min-w-[200px]">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input 
+                                type="text" 
+                                id="admin-search-input" 
+                                placeholder="Cari nama atau ID..." 
+                                class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                            >
+                        </div>
+
+                        <!-- Status Filter -->
+                        <select 
+                            id="admin-filter-status" 
+                            class="py-1.5 px-2.5 sm:px-3 text-xs rounded-xl border border-slate-200 bg-white text-slate-700 font-medium focus:outline-none focus:border-emerald-500"
+                        >
+                            <option value="all">Semua Status</option>
+                            <option value="Sekolah">Sekolah</option>
+                            <option value="Kuliah">Kuliah</option>
+                            <option value="Kerja">Bekerja</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+
+                        <!-- Sort Selector -->
+                        <select 
+                            id="admin-sort-select" 
+                            class="py-1.5 px-2.5 sm:px-3 text-xs rounded-xl border border-slate-200 bg-white text-slate-700 font-medium focus:outline-none focus:border-emerald-500"
+                        >
+                            <option value="newest">Waktu Terbaru</option>
+                            <option value="oldest">Waktu Terlama</option>
+                            <option value="highest">Skor Tertinggi</option>
+                            <option value="lowest">Skor Terendah</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 1. KHUSUS TAMPILAN HP: RESPONDENT MOBILE CARDS -->
+                <div id="mobile-respondents-cards" class="sm:hidden p-3 space-y-2.5 bg-slate-50/30">
+                    <!-- Populated by app.js on mobile screens -->
+                </div>
+
+                <!-- 2. KHUSUS TAMPILAN DESKTOP/TABLET: FULL TABLE -->
+                <div class="hidden sm:block overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-200/80">
+                                <th class="py-3 px-4 text-center w-12">No</th>
+                                <th class="py-3 px-4">Nama Responden</th>
+                                <th class="py-3 px-4 text-center">Umur</th>
+                                <th class="py-3 px-4 text-center">Status / Pakai</th>
+                                <th class="py-3 px-4 text-center">Rekomendasi SPK</th>
+                                <th class="py-3 px-4">Tanggal Pengisian</th>
+                                <th class="py-3 px-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-respondents-body" class="divide-y divide-slate-100 text-xs">
+                            <!-- Populated by app.js on desktop screens -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-3 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500">
+                    <span>* Data tersimpan aman di LocalStorage perangkat ini</span>
+                    <button type="button" onclick="exportRespondentsToCSV()" class="text-emerald-700 font-bold hover:underline">
+                        Unduh File Rekap (.csv)
+                    </button>
+                </div>
+            </div>
+
+        </div><!-- /view-admin -->
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-5 sm:py-6 border-t border-slate-200/80 bg-white/60 text-center text-xs text-slate-400">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>&copy; 2026 <strong>SmartRide</strong> — Decision Support System for Online Transportation</span>
+            <span class="text-emerald-700 font-semibold flex items-center gap-1.5 text-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Gojek • Grab • Maxim SPK Engine
+            </span>
+        </div>
+    </footer>
+
+
+    <!-- ==========================================
+         MODAL: ADMIN LOGIN (KREDENSIAL DIRAHSIAKAN)
+         ========================================== -->
+    <div id="admin-login-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="smart-card max-w-sm w-full p-5 sm:p-6 shadow-2xl animate-fade-up relative bg-white">
+            <button 
+                type="button" 
+                onclick="closeAdminLoginModal()" 
+                class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 transition"
+            >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center mb-3.5 shadow-md shadow-emerald-500/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+
+            <h3 class="text-lg font-extrabold text-slate-900">Portal Administrator</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4">Masuk untuk melihat database kuesioner dan analitik SPK SmartRide.</p>
+
+            <form onsubmit="handleAdminLogin(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1" for="admin-username">Username</label>
+                    <input 
+                        type="text" 
+                        id="admin-username" 
+                        placeholder="Masukkan username admin" 
+                        required 
+                        autocomplete="username"
+                        class="smart-input"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1" for="admin-password">Password</label>
+                    <input 
+                        type="password" 
+                        id="admin-password" 
+                        placeholder="••••••••" 
+                        required 
+                        autocomplete="current-password"
+                        class="smart-input"
+                    >
+                </div>
+
+                <!-- Pesan Error Aman (Tidak membocorkan password) -->
+                <div id="admin-login-error" class="hidden text-xs text-rose-600 font-semibold bg-rose-50 p-2.5 rounded-xl border border-rose-200">
+                    Username atau Password salah.
+                </div>
+
+                <!-- Notice Khusus Tim Pengelola (Privasi Aman) -->
+                <div class="text-[11px] text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center gap-1.5">
+                    <span>🔒 Akses khusus tim pengelola dan administrator sistem.</span>
+                </div>
+
+                <div class="pt-1.5">
+                    <button 
+                        type="submit" 
+                        class="w-full py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition shadow-md shadow-emerald-600/20"
+                    >
+                        Masuk Dashboard
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         MODAL: DETAIL RESPONDEN
+         ========================================== -->
+    <div id="detail-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="smart-card max-w-lg w-full p-4 sm:p-6 shadow-2xl animate-fade-up relative max-h-[92vh] flex flex-col bg-white">
+            <button 
+                type="button" 
+                onclick="closeRespondentDetailModal()" 
+                class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 transition"
+            >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <!-- Header Modal -->
+            <div class="pb-2.5 border-b border-slate-100">
+                <span class="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold" id="detail-id">-</span>
+                <h3 class="text-base sm:text-lg font-extrabold text-slate-900 mt-1" id="detail-name">-</h3>
+                <p class="text-[11px] text-slate-400" id="detail-time">-</p>
+            </div>
+
+            <!-- Demographics & SPK Result -->
+            <div class="grid grid-cols-4 gap-1.5 sm:gap-2 my-2.5 sm:my-3 text-center text-xs">
+                <div class="bg-slate-50 p-1.5 sm:p-2 rounded-xl border border-slate-100">
+                    <span class="text-[9px] sm:text-[10px] text-slate-400 block">Umur</span>
+                    <span class="font-bold text-slate-800 text-[11px] sm:text-xs" id="detail-age">-</span>
+                </div>
+                <div class="bg-slate-50 p-1.5 sm:p-2 rounded-xl border border-slate-100">
+                    <span class="text-[9px] sm:text-[10px] text-slate-400 block">Status</span>
+                    <span class="font-bold text-slate-800 text-[11px] sm:text-xs" id="detail-status">-</span>
+                </div>
+                <div class="bg-slate-50 p-1.5 sm:p-2 rounded-xl border border-slate-100">
+                    <span class="text-[9px] sm:text-[10px] text-slate-400 block">Favorit</span>
+                    <span class="font-bold text-slate-800 text-[11px] sm:text-xs" id="detail-favapp">-</span>
+                </div>
+                <div class="bg-emerald-50 p-1.5 sm:p-2 rounded-xl border border-emerald-200">
+                    <span class="text-[9px] sm:text-[10px] text-emerald-700 block">Rekomendasi</span>
+                    <span class="font-extrabold text-emerald-800 text-[11px] sm:text-xs" id="detail-recapp">-</span>
+                </div>
+            </div>
+
+            <!-- List Answers -->
+            <div class="overflow-y-auto flex-1 space-y-1.5 sm:space-y-2 pr-1" id="detail-answers-list">
+                <!-- Populated by showRespondentDetailModal() -->
+            </div>
+
+            <div class="pt-2.5 border-t border-slate-100 text-right">
+                <button 
+                    type="button" 
+                    onclick="closeRespondentDetailModal()" 
+                    class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition"
+                >
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
